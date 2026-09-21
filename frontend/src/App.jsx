@@ -1,25 +1,63 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Predict from './pages/Predict';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
+
+function AppContent() {
+  const { session } = useAuth();
+  
+  return (
+    <div className="min-h-screen flex flex-col font-sans bg-navy-900 text-slate-100 overflow-x-hidden">
+      <Navbar />
+      <main className="flex-grow pt-20">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route 
+            path="/predict" 
+            element={
+              <ProtectedRoute>
+                <Predict />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/login" 
+            element={session ? <Navigate to="/predict" replace /> : <Login />} 
+          />
+          <Route 
+            path="/signup" 
+            element={session ? <Navigate to="/predict" replace /> : <Signup />} 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={session ? <Navigate to="/predict" replace /> : <ForgotPassword />} 
+          />
+          <Route 
+            path="/reset-password" 
+            element={<ResetPassword />} 
+          />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+}
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen flex flex-col font-sans bg-navy-900 text-slate-100 overflow-x-hidden">
-        <Navbar />
-        <main className="flex-grow pt-20">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/predict" element={<Predict />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 }
 

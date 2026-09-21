@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Activity, Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Activity, Menu, X, LogOut, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../hooks/useAuth';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { session, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,12 +19,25 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/login');
+  };
+
+  // Nav links shown to all or specific users based on logic
+  const authLinks = [
+    { name: 'Dashboard', path: '/' },
     { name: 'Predict', path: '/predict' },
+    { name: 'Analysis', path: '/#analysis' }
+  ];
+
+  const publicLinks = [
+    { name: 'Home', path: '/' },
     { name: 'Model & Data', path: '/#model' },
     { name: 'About', path: '/#about' }
   ];
+
+  const linksToShow = session ? authLinks : publicLinks;
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-navy-900/80 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'}`}>
@@ -33,7 +49,7 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {linksToShow.map((link) => (
             <Link 
               key={link.name} 
               to={link.path}
@@ -42,12 +58,37 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-            Login
-          </Link>
-          <Link to="/predict" className="bg-cyan-500 hover:bg-cyan-400 text-navy-900 px-6 py-2.5 rounded-full font-semibold transition-all hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transform hover:-translate-y-0.5">
-            Analyze Now
-          </Link>
+          
+          {session ? (
+            <div className="flex items-center gap-6 border-l border-white/10 pl-6">
+              <div className="flex items-center gap-2 text-sm text-slate-300">
+                <User className="w-4 h-4 text-cyan-400" />
+                <span>{session.user?.email}</span>
+              </div>
+              <button 
+                onClick={handleLogout} 
+                className="text-sm font-medium text-slate-300 hover:text-red-400 transition-colors flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-6 border-l border-white/10 pl-6">
+              <Link to="/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                Login
+              </Link>
+              <Link to="/signup" className="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors">
+                Sign Up
+              </Link>
+            </div>
+          )}
+
+          {!session && (
+            <Link to="/predict" className="bg-cyan-500 hover:bg-cyan-400 text-navy-900 px-6 py-2.5 rounded-full font-semibold transition-all hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transform hover:-translate-y-0.5">
+              Analyze Now
+            </Link>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -63,7 +104,7 @@ const Navbar = () => {
           animate={{ opacity: 1, y: 0 }}
           className="md:hidden absolute top-full left-0 w-full bg-navy-800 border-b border-white/10 p-6 flex flex-col gap-4 shadow-xl"
         >
-          {navLinks.map((link) => (
+          {linksToShow.map((link) => (
             <Link 
               key={link.name} 
               to={link.path}
@@ -74,12 +115,33 @@ const Navbar = () => {
             </Link>
           ))}
           <hr className="border-white/10" />
-          <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-300">
-            Login
-          </Link>
-          <Link to="/predict" onClick={() => setMobileMenuOpen(false)} className="bg-cyan-500 text-center text-navy-900 px-6 py-3 rounded-full font-semibold mt-2">
-            Analyze Now
-          </Link>
+          
+          {session ? (
+            <div className="flex flex-col gap-4">
+              <div className="text-sm text-cyan-400 break-words">{session.user?.email}</div>
+              <button 
+                onClick={() => {
+                  handleLogout();
+                  setMobileMenuOpen(false);
+                }}
+                className="text-lg font-medium text-slate-300 hover:text-red-400 text-left"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-300">
+                Login
+              </Link>
+              <Link to="/signup" onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-cyan-400">
+                Sign Up
+              </Link>
+              <Link to="/predict" onClick={() => setMobileMenuOpen(false)} className="bg-cyan-500 text-center text-navy-900 px-6 py-3 rounded-full font-semibold mt-2">
+                Analyze Now
+              </Link>
+            </div>
+          )}
         </motion.div>
       )}
     </nav>
