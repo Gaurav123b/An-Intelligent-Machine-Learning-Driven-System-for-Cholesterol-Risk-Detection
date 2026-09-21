@@ -17,7 +17,7 @@
   }
 }
 
-@layer utilities {
+@layer components {
   .glass-panel {
     @apply bg-navy-800/60 backdrop-blur-xl border border-white/10 shadow-2xl;
   }
