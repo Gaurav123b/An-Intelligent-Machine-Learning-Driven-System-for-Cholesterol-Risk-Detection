@@ -1,0 +1,18 @@
+# Environments
+venv/
+env/
+.env
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# OS files
+.DS_Store
+
+# Data files (optional, depending on if you want to push data to repo, but usually large datasets shouldn't be pushed. 
+# However, the user might want their cleaned/raw data for this ML project.
+# I'll leave data/ un-ignored so it pushes the project state as is, unless it's too big)
