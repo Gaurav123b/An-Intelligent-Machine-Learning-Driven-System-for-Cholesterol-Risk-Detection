@@ -11,7 +11,7 @@ const steps = [
 
 const WorkflowTimeline = () => {
   return (
-    <section className="py-24 relative bg-navy-900">
+    <section className="py-24 relative bg-slate-50 dark:bg-navy-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="text-center mb-16">
           <motion.h2 
@@ -26,7 +26,7 @@ const WorkflowTimeline = () => {
 
         <div className="relative">
           {/* Vertical Line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-navy-800 rounded-full" />
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-slate-200 dark:bg-navy-800 rounded-full" />
           
           <div className="space-y-12">
             {steps.map((step, index) => {
@@ -38,7 +38,7 @@ const WorkflowTimeline = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.6 }}
-                    className={`w-5/12 glass-panel p-6 rounded-2xl relative group hover:border-cyan-500/50 transition-colors ${isEven ? 'text-right' : 'text-left'}`}
+                    className={`w-5/12 bg-white/60 dark:bg-navy-800/60 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-xl p-6 rounded-2xl relative group hover:border-cyan-500/50 dark:hover:border-cyan-500/50 transition-colors ${isEven ? 'text-right' : 'text-left'}`}
                   >
                     {/* Connecting Dot */}
                     <div className={`absolute top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_10px_#06b6d4] ${isEven ? '-right-[calc(10%_+_3.5rem)]' : '-left-[calc(10%_+_3.5rem)] md:-left-[calc(8.33%_+_1.5rem)] lg:-left-[calc(10%_+_1rem)]'}`} style={{
@@ -46,8 +46,8 @@ const WorkflowTimeline = () => {
                     }} />
                     
                     <h4 className="text-cyan-500 font-bold text-xl mb-1">{step.num}</h4>
-                    <h3 className="text-2xl font-bold text-white mb-2">{step.title}</h3>
-                    <p className="text-slate-400">{step.desc}</p>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">{step.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400">{step.desc}</p>
                   </motion.div>
                 </div>
               );

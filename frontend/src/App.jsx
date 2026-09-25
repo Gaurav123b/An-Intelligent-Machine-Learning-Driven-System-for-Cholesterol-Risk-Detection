@@ -10,12 +10,13 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
+import { ThemeProvider } from './context/ThemeContext';
 
 function AppContent() {
   const { session } = useAuth();
   
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-navy-900 text-slate-100 overflow-x-hidden">
+    <div className="min-h-screen flex flex-col font-sans bg-slate-50 dark:bg-navy-900 text-slate-900 dark:text-slate-100 overflow-x-hidden transition-colors duration-300">
       <Navbar />
       <main className="flex-grow pt-20">
         <Routes>
@@ -53,11 +54,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

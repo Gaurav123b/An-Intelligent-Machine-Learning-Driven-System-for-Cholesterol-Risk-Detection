@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Activity, Menu, X, LogOut, User } from 'lucide-react';
+import { Activity, Menu, X, LogOut, User, Moon, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -10,6 +11,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { session, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,11 +42,11 @@ const Navbar = () => {
   const linksToShow = session ? authLinks : publicLinks;
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-navy-900/80 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'}`}>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-navy-900/80 backdrop-blur-md border-b border-black/5 dark:border-white/5 py-4' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2 group">
-          <Activity className="w-8 h-8 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-          <span className="text-xl font-bold tracking-wider text-slate-100">CARDIOAI</span>
+          <Activity className="w-8 h-8 text-cyan-500 dark:text-cyan-400 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors" />
+          <span className="text-xl font-bold tracking-wider text-slate-900 dark:text-slate-100">CARDIOAI</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -85,16 +87,31 @@ const Navbar = () => {
           )}
 
           {!session && (
-            <Link to="/predict" className="bg-cyan-500 hover:bg-cyan-400 text-navy-900 px-6 py-2.5 rounded-full font-semibold transition-all hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transform hover:-translate-y-0.5">
+            <Link to="/predict" className="bg-cyan-500 hover:bg-cyan-400 text-white dark:text-navy-900 px-6 py-2.5 rounded-full font-semibold transition-all hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transform hover:-translate-y-0.5">
               Analyze Now
             </Link>
           )}
+
+          <button 
+            onClick={toggleTheme} 
+            className="p-2 rounded-full bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-navy-700 transition-colors"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-slate-300" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex md:hidden items-center gap-4">
+          <button 
+            onClick={toggleTheme} 
+            className="p-2 rounded-full bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button className="text-slate-600 dark:text-slate-300" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -102,19 +119,19 @@ const Navbar = () => {
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden absolute top-full left-0 w-full bg-navy-800 border-b border-white/10 p-6 flex flex-col gap-4 shadow-xl"
+          className="md:hidden absolute top-full left-0 w-full bg-white dark:bg-navy-800 border-b border-black/10 dark:border-white/10 p-6 flex flex-col gap-4 shadow-xl"
         >
           {linksToShow.map((link) => (
             <Link 
               key={link.name} 
               to={link.path}
               onClick={() => setMobileMenuOpen(false)}
-              className="text-lg font-medium text-slate-300 hover:text-cyan-400"
+              className="text-lg font-medium text-slate-600 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-400"
             >
               {link.name}
             </Link>
           ))}
-          <hr className="border-white/10" />
+          <hr className="border-black/10 dark:border-white/10" />
           
           {session ? (
             <div className="flex flex-col gap-4">
